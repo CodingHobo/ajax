@@ -1,10 +1,32 @@
 "use strict";
 
-let searchTerm = $("#search");
 
-async function getTerm() {
-  let response = await axios.get("api.giphy.com/v1/gifs", { q: searchTerm });
-  console.log("get result=", response.data);
+const apiKey = 'MhAodEJIJxQMxW9XqxKjyXfNYdLoOIym';
+
+async function getImages(evt) {
+  evt.preventDefault();
+
+  const searchTerm = document.getElementById("search").value;
+
+  const response = await axios.get(("http://api.giphy.com/v1/gifs/search"),
+  {params: { q: searchTerm, api_key: apiKey }});
+
+  const imagesURL = response.data.data.map(image => image.images.original.url);
+  addImages(imagesURL);
 }
-$("#submit").on("click", getTerm());
-//console.log("Let's get this party started!");
+
+function addImages(images) {
+  let max = images.length;
+  const $newImgDiv = $("<div>");
+
+  let i = Math.floor(Math.random() * max);
+
+  const $newImg = $("<img>", {
+    src: images[i]
+  });
+
+  $newImgDiv.append($newImg);
+  $("#display-area").append($newImgDiv);
+}
+
+$("form").on("submit", getImages);
